@@ -38,7 +38,8 @@ jobs:
 
   release:
     needs: validate
-    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+    if: github.repository == 'sw-aka/markdown-viewer' && github.event_name != 'pull_request' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+    environment: release
     runs-on: macos-26
     permissions:
       contents: write
@@ -61,7 +62,7 @@ jobs:
           SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         run: |
           if [ -z "$SPARKLE_PRIVATE_KEY" ]; then
-            echo '::error::Configure the SPARKLE_PRIVATE_KEY Actions secret before publishing.'
+            echo '::error::Configure SPARKLE_PRIVATE_KEY in the release environment before publishing.'
             exit 1
           fi
       - name: Build and sign release

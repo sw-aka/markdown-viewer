@@ -30,7 +30,15 @@ Each release contains a universal `arm64` + `x86_64` application ZIP and its `ap
 
 The committed `Config/UpdateSigning.xcconfig` contains the public Ed25519 verification key. **Do not replace it when creating builds.** Existing installations trust that key.
 
-Configure an Actions repository secret named **`SPARKLE_PRIVATE_KEY`** with the matching base64-encoded private signing seed. Keep a secure backup of that seed. The private key is not part of the public repository. The release job fails explicitly until this secret is present.
+Configure the public repository's **`release` environment** before publishing:
+
+1. Open Settings > Environments > New environment, name it `release`, and configure it.
+2. Under Deployment branches and tags, choose Selected branches and tags. Add two Branch rules, exactly `dev` and `main`.
+3. To approve each release yourself, enable Required reviewers, select your account and save. Leave Prevent self-review unchecked if you will approve runs you trigger. With this option enabled, Development and Stable releases both wait for approval after validation; ordinary build checks remain automatic.
+4. Under Environment secrets, add **`SPARKLE_PRIVATE_KEY`** with the matching base64-encoded private signing seed. Keep a separate secure backup. The private key is not part of the repository.
+5. If you previously stored the same key as a repository secret, remove that repository-level copy once the environment copy is in place, so other jobs cannot obtain it through repository scope.
+
+The release job targets this environment and waits for any configured protection rules before accessing its secrets. Configure the environment explicitly; the workflow declaration alone does not create protection rules. Missing signing credentials stop publication.
 
 No Apple Developer ID certificate is configured. Builds are ad-hoc signed and are not notarized. Initial downloaded installations may require approval through macOS Privacy & Security. Automatic updates are separately authenticated by Sparkle's Ed25519 archive signatures; they do not require the user to disable signature verification.
 

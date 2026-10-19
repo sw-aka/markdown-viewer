@@ -53,6 +53,11 @@ final class UpdateController: NSObject {
             ?? (Bundle.main.object(forInfoDictionaryKey: "MDVBuildChannel") as? String ?? "stable")
         channel = UpdateChannel(rawValue: initialChannel) ?? .stable
         super.init()
+        // A Development installation may later receive a Stable build. Keep
+        // its selected channel rather than replacing it with the new default.
+        if defaults.string(forKey: "updateChannel") == nil {
+            defaults.set(channel.rawValue, forKey: "updateChannel")
+        }
     }
 
     func launch() {

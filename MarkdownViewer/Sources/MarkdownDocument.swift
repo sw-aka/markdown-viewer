@@ -40,6 +40,7 @@ nonisolated struct MarkdownDocument: FileDocument {
     }
 
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
-        FileWrapper(regularFileWithContents: Data(text.utf8))
+        FileWrapper(regularFileWithContents: UpdateWriteProtection.dataForWrite(
+            text: text, existing: configuration.existingFile?.regularFileContents))
     }
 }

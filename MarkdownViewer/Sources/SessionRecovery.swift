@@ -67,9 +67,15 @@ final class SessionRecovery {
     func unregister(_ id: UUID) { entries.removeValue(forKey: id) }
 
     func prepareForInstallation() async throws {
+        UpdateWriteProtection.setActive(true)
         let order = NSApp.orderedWindows
         let active = entries.values.filter { $0.window != nil }.sorted {
             (order.firstIndex(of: $0.window!) ?? Int.max) > (order.firstIndex(of: $1.window!) ?? Int.max)
+        }
+        // Stop native text editing immediately, before the first WebKit await.
+        // SwiftUI's disabled environment is applied on the next view update.
+        for entry in active {
+            descendant(NSTextView.self, in: entry.window?.contentView)?.isEditable = false
         }
         var windows: [SavedWindowSession] = []
         for entry in active {
@@ -104,6 +110,7 @@ final class SessionRecovery {
     }
 
     func cancelInstallation() {
+        UpdateWriteProtection.setActive(false)
         guard installationPrepared else { return }
         for document in editedDocuments { document.updateChangeCount(.changeDone) }
         editedDocuments = []

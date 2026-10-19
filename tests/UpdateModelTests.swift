@@ -27,6 +27,12 @@ struct UpdateModelTests {
         let restored = try JSONDecoder().decode(SavedUpdateSession.self, from: data).windows[0]
         expect(restored.text == saved.text && restored.fileURL == saved.fileURL, "Preserve unsaved text and original destination")
         expect(restored.frame == saved.frame && restored.mode == saved.mode && restored.selectionLocation == 3 && restored.previewScroll == 456, "Preserve window and editor state")
+        let original = Data("original saved text".utf8)
+        UpdateWriteProtection.setActive(true)
+        expect(UpdateWriteProtection.dataForWrite(text: "unsaved edits", existing: original) == original, "Update termination must not save over original file bytes")
+        expect(UpdateWriteProtection.dataForWrite(text: "new draft", existing: nil) == Data("new draft".utf8), "Untitled recovery drafts retain their text")
+        UpdateWriteProtection.setActive(false)
+        expect(UpdateWriteProtection.dataForWrite(text: "explicit save", existing: original) == Data("explicit save".utf8), "Normal saves must retain their ordinary behavior")
         print("Update selection and session snapshot tests passed.")
     }
 }

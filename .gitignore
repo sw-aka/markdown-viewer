@@ -18,3 +18,10 @@ xcuserdata/
 __pycache__/
 *.py[cod]
 .pytest_cache/
+
+# Personal agent guidance never belongs in the distribution repository.
+AGENTS.md
+CLAUDE.md
+.agents/
+.claude/
+.codex/

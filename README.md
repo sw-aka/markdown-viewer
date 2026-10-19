@@ -42,6 +42,14 @@ Mermaid diagrams render directly in the preview. Hover to reveal the controls, p
 
 </details>
 
+## License
+
+Copyright (c) 2026 sw-aka.
+
+Markdown Viewer is free software licensed under the **GNU Affero General Public License, version 3 only** (`AGPL-3.0-only`). You may redistribute and modify it under those terms. It is distributed without any warranty, including the implied warranties of merchantability or fitness for a particular purpose. See [LICENSE](LICENSE) for the complete terms.
+
+Third-party components retain their respective licenses.
+
 ## A few useful shortcuts
 
 | Action | Shortcut |

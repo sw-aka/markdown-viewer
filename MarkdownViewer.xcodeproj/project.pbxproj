@@ -26,6 +26,7 @@
 		C6B4CF98B9A1EF133572827D /* SnapshotRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACDF93708D0030FA39EAB86 /* SnapshotRenderer.swift */; };
 		D591D375413914CDFE74BF5F /* UpdateViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B649395EE3F103DB45B7A0 /* UpdateViews.swift */; };
 		DA0929E33777763403A23403 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 270FB03D710EB719FFDC01F6 /* Assets.xcassets */; };
+		E5E54444D832FE957E779426 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = B64CD113A5EC4A7569C9E8F4 /* LICENSE */; };
 		ED58D7E9127923FA04AEA9C5 /* UpdateRelease.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38BB8AC447FF75AEC1967014 /* UpdateRelease.swift */; };
 		F379EF77E3FB0A4BF65E1C14 /* Samples in Resources */ = {isa = PBXBuildFile; fileRef = 2260972646D92CDBC81CE6A9 /* Samples */; };
 		F3B1F140B10586E15AEA7BAF /* UpdateWriteProtection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A59EDF068BBE3FDAE40E52CF /* UpdateWriteProtection.swift */; };
@@ -69,6 +70,7 @@
 		A59EDF068BBE3FDAE40E52CF /* UpdateWriteProtection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateWriteProtection.swift; sourceTree = "<group>"; };
 		A6C785A8F0555533EA07D883 /* MarkdownDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownDocument.swift; sourceTree = "<group>"; };
 		AA762F23415051A772ED163E /* ViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewMode.swift; sourceTree = "<group>"; };
+		B64CD113A5EC4A7569C9E8F4 /* LICENSE */ = {isa = PBXFileReference; path = LICENSE; sourceTree = "<group>"; };
 		CFB99F29F107EA16432F5A66 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = vendor/Sparkle.framework; sourceTree = "<group>"; };
 		EA7BD5ACCA4BCB59C2BF5B1E /* Renderer */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Renderer; path = MarkdownViewer/Resources/Renderer; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -104,6 +106,7 @@
 		3A443831EACFD18D1DDC3D55 = {
 			isa = PBXGroup;
 			children = (
+				B64CD113A5EC4A7569C9E8F4 /* LICENSE */,
 				02E22A82F714E56BDCA6066E /* Config */,
 				6A437AC9FFDD1A27A632098A /* MarkdownViewer */,
 				79888232AB33C38306B2B78A /* Frameworks */,
@@ -226,6 +229,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DA0929E33777763403A23403 /* Assets.xcassets in Resources */,
+				E5E54444D832FE957E779426 /* LICENSE in Resources */,
 				34D78D3D7EF76471FB7431E0 /* Renderer in Resources */,
 				F379EF77E3FB0A4BF65E1C14 /* Samples in Resources */,
 			);

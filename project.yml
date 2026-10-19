@@ -1,0 +1,64 @@
+name: MarkdownViewer
+options:
+  bundleIdPrefix: com.alldeploy
+  deploymentTarget:
+    macOS: "26.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+    SWIFT_APPROACHABLE_CONCURRENCY: YES
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGN_STYLE: Manual
+    DEVELOPMENT_TEAM: ""
+    ENABLE_HARDENED_RUNTIME: NO
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+targets:
+  MarkdownViewer:
+    type: application
+    platform: macOS
+    sources:
+      - path: MarkdownViewer/Sources
+      - path: MarkdownViewer/Resources/Renderer
+        type: folder
+        buildPhase: resources
+      - path: MarkdownViewer/Resources/Samples
+        type: folder
+        buildPhase: resources
+      - path: MarkdownViewer/Resources/Assets.xcassets
+    info:
+      path: MarkdownViewer/Info.plist
+      properties:
+        CFBundleDisplayName: Markdown Viewer
+        CFBundleName: Markdown Viewer
+        LSApplicationCategoryType: public.app-category.developer-tools
+        NSHumanReadableCopyright: ""
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: Markdown Document
+            CFBundleTypeRole: Editor
+            LSHandlerRank: Alternate
+            LSItemContentTypes:
+              - net.daringfireball.markdown
+        UTImportedTypeDeclarations:
+          - UTTypeIdentifier: net.daringfireball.markdown
+            UTTypeDescription: Markdown Document
+            UTTypeConformsTo:
+              - public.plain-text
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - md
+                - markdown
+                - mdown
+                - mkd
+                - mkdn
+              public.mime-type:
+                - text/markdown
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.alldeploy.MarkdownViewer
+        PRODUCT_NAME: Markdown Viewer
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        COMBINE_HIDPI_IMAGES: YES

@@ -1,0 +1,265 @@
+/* Page chrome around .markdown-body, matching GitHub's file view. */
+
+:root {
+  color-scheme: light dark;
+}
+
+html,
+body {
+  margin: 0;
+  background-color: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  html,
+  body {
+    background-color: #0d1117;
+  }
+}
+
+.markdown-body {
+  box-sizing: border-box;
+  min-width: 200px;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 32px 45px 64px;
+}
+
+@media (max-width: 767px) {
+  .markdown-body {
+    padding: 16px 16px 48px;
+  }
+}
+
+.mdv-placeholder {
+  display: none;
+}
+
+body.mdv-empty .mdv-placeholder {
+  display: block;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 13px -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #59636e;
+  pointer-events: none;
+}
+
+/* highlight.js themes paint their own background; GitHub's code blocks use the
+   markdown-body background instead. */
+.markdown-body .hljs {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* Copy button shown on hover, like GitHub. */
+.markdown-body .highlight,
+.markdown-body .snippet-clipboard-content {
+  position: relative;
+}
+
+.markdown-body .zeroclipboard-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.markdown-body .highlight:hover .zeroclipboard-container,
+.markdown-body .snippet-clipboard-content:hover .zeroclipboard-container {
+  opacity: 1;
+}
+
+.markdown-body .mdv-copy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin: 8px;
+  padding: 0;
+  border: 1px solid var(--borderColor-default, #d1d9e0);
+  border-radius: 6px;
+  background: var(--bgColor-muted, #f6f8fa);
+  color: var(--fgColor-muted, #59636e);
+  cursor: pointer;
+}
+
+.markdown-body .mdv-copy:hover {
+  background: var(--bgColor-neutral-muted, #818b981f);
+}
+
+.markdown-body .mdv-copy .octicon-check,
+.markdown-body .mdv-copy.ClipboardButton--success .octicon-copy {
+  display: none;
+}
+
+.markdown-body .mdv-copy.ClipboardButton--success .octicon-check {
+  display: inline-block;
+  fill: var(--fgColor-success, #1a7f37);
+}
+
+/* Mermaid, maps and STL viewers. */
+.markdown-body .mdv-enrich {
+  margin-bottom: 16px;
+}
+
+/* The viewport clips panned diagrams and keeps controls outside SVG content. */
+.markdown-body .mdv-diagram-viewer {
+  position: relative;
+}
+.markdown-body .mdv-diagram-viewport {
+  width: 100%;
+  overflow: hidden;
+  min-height: 180px;
+  max-height: 640px;
+  cursor: grab;
+  touch-action: none;
+}
+.markdown-body .mdv-diagram-viewport.mdv-dragging { cursor: grabbing; }
+.markdown-body .mdv-mermaid-diagram {
+  width: 100%;
+  height: 100%;
+  transform-origin: center;
+}
+.markdown-body .mdv-mermaid-diagram > svg {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+}
+.markdown-body .mdv-diagram-controls {
+  position: absolute;
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+.markdown-body .mdv-diagram-viewer:hover > .mdv-diagram-controls,
+.markdown-body .mdv-diagram-viewer:has(button:focus-visible) > .mdv-diagram-controls {
+  opacity: 1;
+  pointer-events: auto;
+}
+.markdown-body .mdv-diagram-top { top: 8px; right: 8px; }
+.markdown-body .mdv-diagram-navigation {
+  bottom: 8px;
+  right: 8px;
+  display: grid;
+  grid-template-areas: ". up in" "left reset right" ". down out";
+}
+.markdown-body .mdv-diagram-controls button,
+.markdown-body .mdv-diagram-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--borderColor-default, #d1d9e0);
+  border-radius: 6px;
+  background: var(--bgColor-muted, #f6f8fa);
+  color: var(--fgColor-muted, #59636e);
+  cursor: pointer;
+}
+.markdown-body .mdv-diagram-controls button:hover,
+.markdown-body .mdv-diagram-close:hover { color: var(--fgColor-default, #1f2328); }
+.markdown-body .mdv-diagram-controls button:focus-visible,
+.markdown-body .mdv-diagram-close:focus-visible { outline: 2px solid #0969da; outline-offset: 2px; }
+dialog.mdv-diagram-dialog {
+  position: fixed;
+  inset: 20px;
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 40px 12px 12px;
+  border: 1px solid var(--borderColor-default, #d1d9e0);
+  border-radius: 8px;
+  outline: none;
+}
+.mdv-diagram-dialog .mdv-diagram-top { display: none; }
+.mdv-diagram-dialog::backdrop { background: #0008; }
+.mdv-diagram-dialog .mdv-diagram-viewer,
+.mdv-diagram-dialog .mdv-diagram-viewport { height: 100%; max-height: none; min-height: 0; }
+.markdown-body .mdv-diagram-close { position: absolute; top: 4px; right: 8px; }
+
+.markdown-body .mdv-map,
+.markdown-body .mdv-stl {
+  height: 420px;
+  border: 1px solid var(--borderColor-default, #d1d9e0);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.markdown-body .mdv-map table {
+  margin: 0;
+  font-size: 12px;
+}
+
+.markdown-body .mdv-error {
+  padding: 16px;
+  border: 1px solid var(--borderColor-danger-muted, #ff818266);
+  border-radius: 6px;
+  background: var(--bgColor-danger-muted, #ffebe9);
+  color: var(--fgColor-danger, #d1242f);
+}
+
+.markdown-body .mdv-error pre {
+  margin: 8px 0 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  white-space: pre-wrap;
+}
+
+/* Math. TeX can draw far outside a formula's box (\rlap, \raise, \rule);
+   clip every formula to its own box so it cannot cover the page. */
+.markdown-body mjx-container > svg {
+  overflow: hidden !important;
+}
+
+/* Math. */
+.markdown-body .mdv-math-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.markdown-body .mdv-math mjx-container[display="true"] {
+  margin: 0;
+}
+
+/* Images marked for one colour scheme only (GitHub's #gh-*-mode-only). */
+@media (prefers-color-scheme: dark) {
+  .markdown-body img[src$="#gh-light-mode-only"] {
+    display: none;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .markdown-body img[src$="#gh-dark-mode-only"] {
+    display: none;
+  }
+}
+
+.markdown-body .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  word-wrap: normal;
+  border: 0;
+}
+
+.markdown-body markdown-accessiblity-table {
+  display: block;
+}

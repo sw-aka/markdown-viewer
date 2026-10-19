@@ -1,0 +1,34 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { JSDOM } from 'jsdom';
+import { addMermaidControls } from '../src/enrich/mermaid-controls.js';
+
+test('diagram controls zoom, pan, reset, expand and restore the same SVG', () => {
+  const dom = new JSDOM('<div id="host"><div id="diagram"><svg viewBox="0 0 600 400"></svg></div></div>');
+  globalThis.document = dom.window.document;
+  dom.window.HTMLDialogElement.prototype.showModal = function () { this.open = true; };
+  dom.window.HTMLDialogElement.prototype.close = function () { this.open = false; };
+  const host = document.getElementById('host');
+  const diagram = document.getElementById('diagram');
+  const svg = diagram.firstChild;
+  const dispose = addMermaidControls(host, diagram);
+  const click = (name) => document.querySelector(`button[aria-label="${name}"]`).click();
+  click('Zoom in');
+  assert.match(diagram.style.transform, /scale\(1.25\)/);
+  click('Pan left');
+  assert.match(diagram.style.transform, /translate\(60px, 0px\)/);
+  click('Reset diagram');
+  assert.equal(diagram.style.transform, 'translate(0px, 0px) scale(1)');
+  click('Expand diagram');
+  assert.equal(document.querySelector('dialog').open, true);
+  assert.equal(document.activeElement, document.querySelector('dialog'));
+  assert.equal(svg.closest('dialog')?.getAttribute('aria-label'), 'Expanded Mermaid diagram');
+  document.querySelector('dialog').dispatchEvent(new dom.window.Event('cancel', { cancelable: true }));
+  assert.equal(document.querySelector('dialog'), null);
+  assert.ok(host.contains(svg));
+  click('Expand diagram');
+  dispose();
+  assert.equal(document.querySelector('dialog'), null);
+  assert.equal(host.childElementCount, 0);
+  delete globalThis.document;
+});

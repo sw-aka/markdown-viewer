@@ -124,6 +124,8 @@ struct MarkdownPreview: NSViewRepresentable {
                 }
                 renderedMarkdown = nil
                 flush()
+            case "rendered":
+                if let webView { SessionRecovery.shared.restorePreview(in: webView) }
             case "scroll":
                 if parent.syncEnabled, let line = body["line"] as? Double {
                     parent.scrollSync.previewDidScroll(toLine: line)

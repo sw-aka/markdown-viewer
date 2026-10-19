@@ -6,6 +6,9 @@ struct ContentView: View {
     @Binding var text: String
     /// Folder that relative links and images resolve against, if any.
     let baseDirectory: URL?
+    var sessionKind: SessionWindowKind = .document
+    var fileURL: URL? = nil
+    @State private var sessionID = UUID()
 
     @Environment(\.colorScheme) private var colorScheme
     @SceneStorage("viewMode") private var mode: ViewMode = .split
@@ -30,6 +33,13 @@ struct ContentView: View {
                 isActive: mode != .source
             )
         }
+        .disabled(UpdateController.shared.isInstalling)
+        .allowsHitTesting(!UpdateController.shared.isInstalling)
+        .background {
+            SessionWindowAnchor(id: sessionID, kind: sessionKind, fileURL: fileURL,
+                                text: $text, mode: $mode, fraction: $splitFraction)
+                .frame(width: 0, height: 0)
+        }
         .frame(minWidth: 640, minHeight: 400)
         // WebKit repaints asynchronously while the split animates. Keep the
         // exposed area the same color as the renderer until its tiles arrive.
@@ -37,6 +47,7 @@ struct ContentView: View {
             ? Color(red: 13 / 255, green: 17 / 255, blue: 23 / 255)
             : Color.white)
         .toolbar {
+            ToolbarItem(placement: .primaryAction) { UpdateToolbarItem() }
             ToolbarItem(placement: .principal) {
                 GlassSegmentedControl(
                     selection: $mode.animation(.smooth(duration: 0.35)),

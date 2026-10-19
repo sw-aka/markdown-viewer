@@ -10,7 +10,9 @@ settings:
     SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
     SWIFT_APPROACHABLE_CONCURRENCY: YES
     MARKETING_VERSION: "0.1.0"
-    CURRENT_PROJECT_VERSION: "1"
+    CURRENT_PROJECT_VERSION: "0.1.0"
+    UPDATE_REPOSITORY: sw-aka/markdown-viewer
+    UPDATE_CHANNEL: stable
     CODE_SIGN_IDENTITY: "-"
     CODE_SIGN_STYLE: Manual
     DEVELOPMENT_TEAM: ""
@@ -20,6 +22,13 @@ targets:
   MarkdownViewer:
     type: application
     platform: macOS
+    configFiles:
+      Debug: Config/UpdateSigning.xcconfig
+      Release: Config/UpdateSigning.xcconfig
+    dependencies:
+      - framework: vendor/Sparkle.framework
+        embed: true
+        codeSign: true
     sources:
       - path: MarkdownViewer/Sources
       - path: MarkdownViewer/Resources/Renderer
@@ -32,6 +41,14 @@ targets:
     info:
       path: MarkdownViewer/Info.plist
       properties:
+        MDVUpdateRepository: $(UPDATE_REPOSITORY)
+        MDVBuildChannel: $(UPDATE_CHANNEL)
+        SUPublicEDKey: $(UPDATE_PUBLIC_KEY)
+        SUEnableAutomaticChecks: false
+        SUAutomaticallyUpdate: false
+        SUVerifyUpdateBeforeExtraction: true
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         CFBundleDisplayName: Markdown Viewer
         CFBundleName: Markdown Viewer
         LSApplicationCategoryType: public.app-category.developer-tools

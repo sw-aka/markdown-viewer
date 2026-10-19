@@ -4,6 +4,7 @@ import SwiftUI
 /// Plain-text Markdown editor backed by NSTextView, with light syntax colouring.
 struct SourceEditor: NSViewRepresentable {
     @Binding var text: String
+    @Environment(\.isEnabled) private var isEnabled
     let scrollSync: ScrollSync
     let syncEnabled: Bool
     /// False while the editor is collapsed (Preview mode): it then gives up focus.
@@ -63,6 +64,7 @@ struct SourceEditor: NSViewRepresentable {
     func updateNSView(_ scrollView: NSScrollView, context: Context) {
         context.coordinator.parent = self
         guard let textView = context.coordinator.textView else { return }
+        textView.isEditable = isEnabled
         if textView.string != text {
             // External change (revert, document undo): the editor's own undo
             // stack no longer matches the text.
@@ -88,6 +90,7 @@ struct SourceEditor: NSViewRepresentable {
                 window.makeFirstResponder(textView)
             }
         }
+        SessionRecovery.shared.restoreEditor(in: textView)
         context.coordinator.hadFocusRequest = takesFocus
     }
 

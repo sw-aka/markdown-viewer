@@ -46,7 +46,7 @@ struct ScratchPadView: View {
     @State private var store = ScratchPadStore.shared
 
     var body: some View {
-        ContentView(text: $store.text, baseDirectory: nil)
+        ContentView(text: $store.text, baseDirectory: nil, sessionKind: .scratch)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button("Save as File…", systemImage: "square.and.arrow.down", action: saveAsFile)

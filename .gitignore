@@ -5,3 +5,12 @@ DerivedData/
 *.xcodeproj/xcuserdata/
 *.xcodeproj/project.xcworkspace/xcuserdata/
 xcuserdata/
+
+.private/
+*.pem
+*.p12
+*.p8
+.env
+.env.*
+
+/vendor/

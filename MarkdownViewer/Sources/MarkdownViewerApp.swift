@@ -30,6 +30,8 @@ struct MarkdownViewerApp: App {
         .defaultSize(width: 1280, height: 820)
         .keyboardShortcut("0", modifiers: .command)
 
+        Settings { UpdateSettingsView() }
+
         DocumentGroup(newDocument: MarkdownDocument()) { file in
             DocumentContentView(text: file.$document.text, fileURL: file.fileURL)
         }
@@ -50,7 +52,7 @@ private struct DocumentContentView: View {
     @Environment(\.dismissWindow) private var dismissWindow
 
     var body: some View {
-        ContentView(text: $text, baseDirectory: fileURL?.deletingLastPathComponent())
+        ContentView(text: $text, baseDirectory: fileURL?.deletingLastPathComponent(), fileURL: fileURL)
             .onAppear(perform: dismissEmptyScratchPad)
             .onChange(of: fileURL) { dismissEmptyScratchPad() }
     }
@@ -58,12 +60,19 @@ private struct DocumentContentView: View {
     private func dismissEmptyScratchPad() {
         // Wait for a real file to open successfully. New untitled documents
         // and a cancelled Open panel should leave the scratch pad alone.
-        guard fileURL != nil, ScratchPadStore.shared.text.isEmpty else { return }
+        guard !SessionRecovery.shared.isRestoring, fileURL != nil, ScratchPadStore.shared.text.isEmpty else { return }
         dismissWindow(id: ScratchPadView.windowID)
     }
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        Task {
+            await SessionRecovery.shared.restoreIfNeeded()
+            UpdateController.shared.launch()
+        }
+    }
+
     /// The scratch pad is the launch window; never add an untitled document.
     func applicationShouldOpenUntitledFile(_ sender: NSApplication) -> Bool { false }
 }

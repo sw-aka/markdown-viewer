@@ -31,6 +31,8 @@ targets:
         codeSign: true
     sources:
       - path: MarkdownViewer/Sources
+      - path: LICENSE
+        buildPhase: resources
       - path: MarkdownViewer/Resources/Renderer
         type: folder
         buildPhase: resources
@@ -52,7 +54,7 @@ targets:
         CFBundleDisplayName: Markdown Viewer
         CFBundleName: Markdown Viewer
         LSApplicationCategoryType: public.app-category.developer-tools
-        NSHumanReadableCopyright: ""
+        NSHumanReadableCopyright: "Copyright (c) 2026 sw-aka. Licensed under AGPL-3.0-only."
         CFBundleDocumentTypes:
           - CFBundleTypeName: Markdown Document
             CFBundleTypeRole: Editor

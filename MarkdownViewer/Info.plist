@@ -42,7 +42,7 @@
 	<key>MDVUpdateRepository</key>
 	<string>$(UPDATE_REPOSITORY)</string>
 	<key>NSHumanReadableCopyright</key>
-	<string></string>
+	<string>Copyright (c) 2026 sw-aka. Licensed under AGPL-3.0-only.</string>
 	<key>SUAutomaticallyUpdate</key>
 	<false/>
 	<key>SUEnableAutomaticChecks</key>

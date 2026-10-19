@@ -2,6 +2,7 @@
   "name": "md-viewer-renderer",
   "private": true,
   "version": "0.1.0",
+  "license": "AGPL-3.0-only",
   "description": "GitHub-flavored Markdown renderer bundled into the macOS app's WKWebView",
   "type": "module",
   "scripts": {

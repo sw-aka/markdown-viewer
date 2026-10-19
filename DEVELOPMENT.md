@@ -12,6 +12,7 @@ npm ci
 npm test
 npm run build
 cd ..
+scripts/bootstrap-sparkle.sh
 xcodebuild -project MarkdownViewer.xcodeproj -scheme MarkdownViewer \
   -configuration Debug -derivedDataPath build/DerivedData build
 ```
@@ -27,3 +28,12 @@ Work is integrated into `dev`. Promotion to `main` is a separate, explicit relea
 - Pull requests run validation without publishing a release.
 
 Release and update configuration is described in [RELEASING.md](RELEASING.md).
+
+## Update components
+
+- `UpdateRelease.swift` selects compatible GitHub releases and validates asset locations.
+- `UpdateController.swift` checks releases and drives Sparkle through a custom user interface.
+- `UpdateViews.swift` provides the toolbar progress indicator, popover, and Settings.
+- `SessionRecovery.swift` snapshots windows and unsaved buffers before installation and restores them on relaunch.
+
+Run `scripts/test-swift.sh` and the Python tests in `tests` for release and recovery-model validation. Sparkle handles archive authentication, extraction, installation and relaunch.

@@ -57,13 +57,23 @@ Drag the divider to resize the panes. Double-click it to return to an even split
 
 For a tour of the supported Markdown features, choose **Help → Markdown Feature Tour**.
 
+## Updates
+
+Choose **Stable** or **Development** in **Settings → Updates**. The app checks on launch by default; you can turn that off and check manually with the circled up arrow in the toolbar.
+
+When an update is available, choose **Update Now**. Download progress appears in the popover and around the toolbar icon while you keep writing. After the download is verified, the app saves your current session, installs the update, and restores your windows and unsaved text.
+
+See [Releasing](RELEASING.md) for the branch flow, signing setup, and distribution details.
+
 ## Build and run
 
-Requires **macOS 26 or later** and **Xcode with the macOS 26 SDK or later**. The generated Xcode project and bundled renderer are included, so building the app does not require Node.js.
+Requires **macOS 26 or later** and **Xcode with the macOS 26 SDK or later**. The generated Xcode project and bundled renderer are included, so building the app does not require Node.js. Fetch the pinned Sparkle framework once before building:
 
 From the repository root:
 
 ```sh
+scripts/bootstrap-sparkle.sh
+
 xcodebuild \
   -project MarkdownViewer.xcodeproj \
   -scheme MarkdownViewer \

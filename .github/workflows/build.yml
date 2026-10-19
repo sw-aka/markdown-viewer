@@ -1,0 +1,82 @@
+name: Build and release
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    branches: [dev, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '26'
+          cache: npm
+          cache-dependency-path: renderer/package-lock.json
+      - run: npm ci && npm test && npm run build
+        working-directory: renderer
+      - run: git diff --exit-code -- MarkdownViewer/Resources/Renderer
+      - run: python3 -m unittest discover -s tests -p 'test_*.py'
+      - run: scripts/test-swift.sh
+      - run: scripts/bootstrap-sparkle.sh
+      - run: >-
+          xcodebuild -project MarkdownViewer.xcodeproj -scheme MarkdownViewer
+          -configuration Debug -derivedDataPath build/DerivedData build
+
+  release:
+    needs: validate
+    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+    runs-on: macos-26
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Select channel
+        id: channel
+        env:
+          RELEASE_BRANCH: ${{ github.ref_name }}
+        run: |
+          if [ "$RELEASE_BRANCH" = main ]; then
+            echo 'name=stable' >> "$GITHUB_OUTPUT"
+          else
+            echo 'name=development' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Require update signing key
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          if [ -z "$SPARKLE_PRIVATE_KEY" ]; then
+            echo '::error::Configure the SPARKLE_PRIVATE_KEY Actions secret before publishing.'
+            exit 1
+          fi
+      - name: Build and sign release
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+          RELEASE_CHANNEL: ${{ steps.channel.outputs.name }}
+        run: scripts/build-release.sh "$RELEASE_CHANNEL" "$GITHUB_RUN_NUMBER"
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: MarkdownViewer-${{ steps.channel.outputs.name }}-${{ github.run_number }}
+          path: |
+            build/release/*.zip
+            build/release/appcast.xml
+          if-no-files-found: error
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/publish-release.py

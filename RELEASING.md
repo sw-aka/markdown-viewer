@@ -56,9 +56,9 @@ Without a signing secret this produces a local ZIP, not a publishable update fee
 
 ## In-app updates
 
-The toolbar's circled up arrow opens a popover. If an update is already known, opening the popover shows that release without repeating the check. Otherwise it checks GitHub releases and shows the result. Settings controls the release channel and automatic checks on launch.
+The update control appears in the toolbar only when an update is available or a download is in progress or ready to install. It opens a popover with the current update state. **Markdown Viewer → Check for Updates…**, and the equivalent Settings button, open a Software Update window with checking progress and results, even when no document is open. Known updates and pending downloads are shown without repeating the check. Settings controls the release channel and automatic checks on launch.
 
-After **Update Now**, the toolbar and popover show download progress. Writing remains available during download and verification. Before installation, editing pauses briefly while a durable recovery snapshot is saved. If saving fails, installation stops.
+After **Download Update**, the toolbar and popover show download progress. Writing remains available during download and verification. After verification the update waits at **Ready to install**, with editing still available. Only **Install and Restart** begins the restart: editing pauses briefly while a durable recovery snapshot captures the latest buffers. If saving fails, installation stops.
 
 The snapshot stores each open document's current text, original file URL, window frame, view mode, split, editor selection and scroll positions. Untitled documents and Scratch Pad text are included. The app does not save unsaved text over the original files to perform an update. On relaunch, it restores the windows and buffers; unavailable original files are restored as untitled documents. Editor undo history is not serialized across the restart.
 

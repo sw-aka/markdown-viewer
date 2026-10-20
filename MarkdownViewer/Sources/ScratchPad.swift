@@ -46,13 +46,8 @@ struct ScratchPadView: View {
     @State private var store = ScratchPadStore.shared
 
     var body: some View {
-        ContentView(text: $store.text, baseDirectory: nil, sessionKind: .scratch)
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button("Save as File…", systemImage: "square.and.arrow.down", action: saveAsFile)
-                        .help("Save the scratch pad as a Markdown file")
-                }
-            }
+        ContentView(text: $store.text, baseDirectory: nil, sessionKind: .scratch,
+                    saveAsFile: saveAsFile)
             .onReceive(NotificationCenter.default.publisher(for: NSApplication.willTerminateNotification)) { _ in
                 store.saveNow()
             }

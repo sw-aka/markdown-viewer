@@ -7,7 +7,7 @@ final class UpdateController: NSObject {
     static let shared = UpdateController()
 
     enum Phase: Equatable {
-        case idle, checking, available, upToDate, downloading, extracting, installing, failed
+        case idle, checking, available, upToDate, downloading, extracting, readyToInstall, installing, failed
     }
     var phase: Phase = .idle
     var release: UpdateRelease?
@@ -22,7 +22,7 @@ final class UpdateController: NSObject {
     var channel: UpdateChannel {
         didSet {
             UserDefaults.standard.set(channel.rawValue, forKey: "updateChannel")
-            guard !isBusy else { return }
+            guard !isBusy, !hasPendingDownload else { return }
             checkTask?.cancel()
             release = nil
             phase = .idle
@@ -35,6 +35,8 @@ final class UpdateController: NSObject {
         return min(1, Double(downloaded) / Double(expected))
     }
     var isBusy: Bool { [.checking, .downloading, .extracting, .installing].contains(phase) }
+    var hasPendingDownload: Bool { [.downloading, .extracting, .readyToInstall, .installing].contains(phase) }
+    var showsToolbarStatus: Bool { hasUpdate || hasPendingDownload || (phase == .failed && release != nil) }
     var isInstalling: Bool { phase == .installing }
     var hasUpdate: Bool { release != nil && phase == .available }
     var currentVersion: String { Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.1.0" }
@@ -66,8 +68,8 @@ final class UpdateController: NSObject {
         if automaticChecks { check() }
     }
 
-    func openedPopover() {
-        guard !isBusy, !hasUpdate else { return }
+    func checkFromMenu() {
+        guard !hasUpdate, !hasPendingDownload else { return }
         check()
     }
 
@@ -81,7 +83,7 @@ final class UpdateController: NSObject {
     }
 
     func check() {
-        guard !isBusy else { return }
+        guard !isBusy, !hasPendingDownload else { return }
         phase = .checking
         release = nil
         message = "Checking for updates…"
@@ -138,7 +140,7 @@ final class UpdateController: NSObject {
         }
     }
 
-    func install() {
+    func download() {
         guard phase == .available, release != nil else { return }
         guard let publicKey = Bundle.main.object(forInfoDictionaryKey: "SUPublicEDKey") as? String,
               Data(base64Encoded: publicKey)?.count == 32 else {
@@ -159,6 +161,11 @@ final class UpdateController: NSObject {
         } catch { fail(error.localizedDescription) }
     }
 
+    func installAndRestart() {
+        guard phase == .readyToInstall else { return }
+        driver?.confirmInstallation()
+    }
+
     func cancelDownload() {
         guard phase == .downloading else { return }
         driver?.cancel?()
@@ -167,6 +174,7 @@ final class UpdateController: NSObject {
     }
 
     func fail(_ text: String) {
+        driver?.cancelPendingInstallation()
         phase = .failed
         message = text
         SessionRecovery.shared.cancelInstallation()
@@ -190,6 +198,19 @@ private enum UpdateError: LocalizedError {
 final class UpdateUserDriver: NSObject, SPUUserDriver {
     weak var controller: UpdateController?
     var cancel: (() -> Void)?
+    private var installationChoice: CheckedContinuation<SPUUserUpdateChoice, Never>?
+
+    func confirmInstallation() {
+        let choice = installationChoice
+        installationChoice = nil
+        choice?.resume(returning: .install)
+    }
+
+    func cancelPendingInstallation() {
+        let choice = installationChoice
+        installationChoice = nil
+        choice?.resume(returning: .skip)
+    }
     init(controller: UpdateController) { self.controller = controller }
 
     func show(_ request: SPUUpdatePermissionRequest) async -> SUUpdatePermissionResponse {
@@ -223,6 +244,13 @@ final class UpdateUserDriver: NSObject, SPUUserDriver {
     func showExtractionReceivedProgress(_ progress: Double) { controller?.extractionProgress = min(1, max(0, progress)) }
     func showReadyToInstallAndRelaunch() async -> SPUUserUpdateChoice {
         guard let controller else { return .dismiss }
+        // Keep editing available and capture the session only after confirmation.
+        let choice = await withCheckedContinuation { continuation in
+            installationChoice = continuation
+            controller.phase = .readyToInstall
+            controller.message = "Ready to install"
+        }
+        guard choice == .install, controller.phase == .readyToInstall else { return .skip }
         controller.phase = .installing
         controller.message = "Saving your windows and restarting…"
         do {
@@ -235,5 +263,5 @@ final class UpdateUserDriver: NSObject, SPUUserDriver {
     }
     func showInstallingUpdate(withApplicationTerminated applicationTerminated: Bool, retryTerminatingApplication: @escaping () -> Void) {}
     func showUpdateInstalledAndRelaunched(_ relaunched: Bool) async {}
-    func dismissUpdateInstallation() {}
+    func dismissUpdateInstallation() { cancelPendingInstallation() }
 }

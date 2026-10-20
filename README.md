@@ -67,9 +67,9 @@ For a tour of the supported Markdown features, choose **Help → Markdown Featur
 
 ## Updates
 
-Choose **Stable** or **Development** in **Settings → Updates**. The app checks on launch by default; you can turn that off and check manually with the circled up arrow in the toolbar.
+Choose **Stable** or **Development** in **Settings → Updates**. The app checks on launch by default; you can turn that off and choose **Markdown Viewer → Check for Updates…** in the menu bar to check manually. The toolbar update control stays hidden when no update is available.
 
-When an update is available, choose **Update Now**. Download progress appears in the popover and around the toolbar icon while you keep writing. After the download is verified, the app saves your current session, installs the update, and restores your windows and unsaved text.
+When an update is available, choose **Download Update**. Download progress appears in the popover and around the toolbar icon while you keep writing. After verification, **Ready to install** appears. Keep working until you choose **Install and Restart**. The app then saves your current session, installs the update, and restores your windows and unsaved text.
 
 See [Releasing](RELEASING.md) for the branch flow, signing setup, and distribution details.
 

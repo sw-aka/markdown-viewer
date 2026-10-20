@@ -32,14 +32,35 @@ struct MarkdownViewerApp: App {
 
         Settings { UpdateSettingsView() }
 
+        Window("Software Update", id: "software-update") {
+            UpdatePopover(updates: UpdateController.shared)
+        }
+        .windowResizability(.contentSize)
+        .defaultLaunchBehavior(.suppressed)
+        .restorationBehavior(.disabled)
+
         DocumentGroup(newDocument: MarkdownDocument()) { file in
             DocumentContentView(text: file.$document.text, fileURL: file.fileURL)
         }
         .defaultSize(width: 1280, height: 820)
         .commands {
             ViewModeCommands()
+            UpdateCommands()
             CommandGroup(replacing: .help) {
                 Button("Markdown Feature Tour") { FeatureTour.open() }
+            }
+        }
+    }
+}
+
+struct UpdateCommands: Commands {
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some Commands {
+        CommandGroup(after: .appInfo) {
+            Button("Check for Updates…") {
+                openWindow(id: "software-update")
+                UpdateController.shared.checkFromMenu()
             }
         }
     }

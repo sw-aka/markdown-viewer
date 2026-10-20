@@ -8,6 +8,7 @@ struct ContentView: View {
     let baseDirectory: URL?
     var sessionKind: SessionWindowKind = .document
     var fileURL: URL? = nil
+    var saveAsFile: (() -> Void)? = nil
     @State private var sessionID = UUID()
 
     @Environment(\.colorScheme) private var colorScheme
@@ -47,7 +48,24 @@ struct ContentView: View {
             ? Color(red: 13 / 255, green: 17 / 255, blue: 23 / 255)
             : Color.white)
         .toolbar {
-            ToolbarItem(placement: .primaryAction) { UpdateToolbarItem() }
+            ToolbarItem(placement: .primaryAction) {
+                HStack(spacing: 14) {
+                    UpdateToolbarItem()
+                    if let saveAsFile {
+                        Button(action: saveAsFile) {
+                            Image(systemName: "square.and.arrow.down")
+                                .font(.system(size: 16))
+                                .frame(width: 28, height: 28)
+                                .contentShape(Circle())
+                        }
+                        .buttonStyle(.plain)
+                        .glassEffect(.regular.interactive(), in: .circle)
+                        .accessibilityLabel("Save as File…")
+                        .help("Save the scratch pad as a Markdown file")
+                    }
+                }
+            }
+            .sharedBackgroundVisibility(.hidden)
             ToolbarItem(placement: .principal) {
                 GlassSegmentedControl(
                     selection: $mode.animation(.smooth(duration: 0.35)),

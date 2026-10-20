@@ -53,8 +53,12 @@ struct ContentView: View {
                     UpdateToolbarItem()
                     if let saveAsFile {
                         Button(action: saveAsFile) {
+                            // Account for the symbol's optical padding inside the circle.
                             Image(systemName: "square.and.arrow.down")
-                                .font(.system(size: 16))
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 16, height: 16)
+                                .offset(y: -1)
                                 .frame(width: 28, height: 28)
                                 .contentShape(Circle())
                         }
